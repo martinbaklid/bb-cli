@@ -1,0 +1,50 @@
+{
+    "size": 1,
+    "limit": 25,
+    "isLastPage": true,
+    "values": [
+        {
+            "slug": "fake-repo",
+            "id": 12,
+            "name": "fake-repo",
+            "hierarchyId": "2f626bbc17897b7d4b34",
+            "scmId": "git",
+            "state": "AVAILABLE",
+            "statusMessage": "Available",
+            "forkable": true,
+            "project": {
+                "key": "FAKE_PROJ",
+                "id": 22,
+                "name": "Fake Project",
+                "public": false,
+                "type": "NORMAL",
+                "links": {
+                    "self": [
+                        {
+                            "href": "http://fake.bitbucket-server.com/projects/FAKE_PROJ"
+                        }
+                    ]
+                }
+            },
+            "public": false,
+            "links": {
+                "clone": [
+                    {
+                        "href": "http://fake.bitbucket-server.com/scm/fake_proj/fake-repo.git",
+                        "name": "http"
+                    },
+                    {
+                        "href": "ssh://git@fake.bitbucket-server.com/fake_proj/fake-repo.git",
+                        "name": "ssh"
+                    }
+                ],
+                "self": [
+                    {
+                        "href": "http://fake.bitbucket-server.com/projects/FAKE_PROJ/repos/fake-repo/browse"
+                    }
+                ]
+            }
+        }
+    ],
+    "start": 0
+}

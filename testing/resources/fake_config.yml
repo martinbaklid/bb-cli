@@ -1,0 +1,7 @@
+version: 1
+projects_folder: ~/projects 
+servers:
+- host: http://fake.bitbucket-server.com
+  projects:
+  - slug: fake_proj
+  - slug: fake_proj2

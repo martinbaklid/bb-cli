@@ -1,0 +1,14 @@
+services:
+  bitbucket:
+    image: atlassian/bitbucket-server
+    deploy:
+      resources:
+        reservations:
+          memory: 1Gb
+    ports:
+      - "7990:7990"
+      - "7999:7999"
+    volumes:
+      - ./data/bitbucket:/var/atlassian/application-data/bitbucket
+volumes:
+  bitbucketVolume: {}
