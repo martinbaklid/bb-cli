@@ -44,7 +44,7 @@ projects:
 *then the resulting folders on local machine will be*
 ```bash
 web/
-    # note: the folder name will be the slug, as it would be with git clone. 
+    # note: the folder name will be the slug, as it would be with git clone.
     #       this can not be overridden
     backend-server/
         ...
@@ -57,4 +57,3 @@ olanorman/
     fun/
         ...
 ```
-

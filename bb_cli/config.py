@@ -1,12 +1,18 @@
-import click
-from click.core import Option
-import yaml
 import os
+from typing import List
 
-from typing import Any, Dict, List, NamedTuple, Optional, TypedDict
+import click
+import yaml
 
-APP_NAME = "bb-cli"
-ENV_PREFIX = "BB_CLI_"
+
+try:
+    from typing import TypedDict
+except ImportError:
+    from mypy_extensions import TypedDict
+
+
+APP_NAME = 'bb-cli'
+ENV_PREFIX = 'BB_CLI_'
 
 
 class ProjectConfig(TypedDict):
@@ -33,13 +39,13 @@ def config_exists() -> bool:
 
 def config_path() -> str:
     click_default = click.get_app_dir(APP_NAME, force_posix=True)
-    app_dir = app_environ("APP_DIR", default=click_default)
+    app_dir = app_environ('APP_DIR', default=click_default)
     os.makedirs(app_dir, exist_ok=True)
-    return os.path.join(app_dir, "config.yaml")
+    return os.path.join(app_dir, 'config.yaml')
 
 
 def dump_config(config: Config) -> None:
-    with open(config_path(), mode="w") as config_file:
+    with open(config_path(), mode='w') as config_file:
         yaml.safe_dump(config, config_file, sort_keys=False)
 
 
@@ -57,5 +63,7 @@ def config() -> None:
 def edit() -> None:
     """ opens config file in editor """
     if not os.path.exists(config_path()):
-        raise click.ClickException(f"Can't find config file in {config_path()}")
+        raise click.ClickException(
+            f"Can't find config file in {config_path()}",
+        )
     click.edit(filename=config_path())

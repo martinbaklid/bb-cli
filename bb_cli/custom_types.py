@@ -1,5 +1,6 @@
 import urllib.parse
+from typing import List
 
 
-SPACE_SEP_LIST = lambda x: x.split()
-HOST = lambda h: urllib.parse.urljoin("https://", h)
+def SPACE_SEP_LIST(x: str) -> List[str]: return x.split()
+def HOST(h: str) -> str: return urllib.parse.urljoin('https://', h)

@@ -1,5 +1,5 @@
 version: 1
-projects_folder: ~/projects 
+projects_folder: ~/projects
 servers:
 - host: http://fake.bitbucket-server.com
   projects:

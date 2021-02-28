@@ -1,7 +1,8 @@
 import click
-from bb_cli.init import init
-from bb_cli.config import config, APP_NAME
+
 from bb_cli.clone import clone
+from bb_cli.config import config
+from bb_cli.init import init
 
 
 @click.group()
@@ -16,5 +17,5 @@ def main() -> None:
     cli()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
