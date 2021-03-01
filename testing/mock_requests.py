@@ -1,8 +1,8 @@
 import json
 import os
 from typing import Any
-from typing import Callable
 from typing import Dict
+from typing import Sequence
 from typing import Tuple
 
 
@@ -31,13 +31,21 @@ class FakeResponse:
         return self.status_code < 400
 
     @staticmethod
-    def from_resource_path(resource_path):
+    def from_resource(resource_path):
         return FakeResponse(_get_resource(resource_path))
 
 
-def get_side_effect(
-    url_mapping: Dict[str, FakeResponse],
-) -> Callable[[str, Tuple[str, str]], FakeResponse]:
-    def get(url: str, auth: Tuple[str, str]) -> FakeResponse:
-        return url_mapping[url]
+def get_side_effect(url_mapping):
+    def get(
+        url: str,
+        params: Dict[str, str],
+        auth: Tuple[str, str],
+    ) -> FakeResponse:
+        key: Tuple[Sequence[str], ...] = (url,)
+        if params:
+            key = (
+                *key,
+                *((k, v) for k, v in params.items()),
+            )
+        return url_mapping[key]
     return get

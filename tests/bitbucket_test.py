@@ -3,21 +3,17 @@ from testing.mock_requests import FakeResponse
 from testing.mock_requests import get_side_effect
 
 FAKE_PROJ_REPOS = (
-    'http://fake.bitbucket-server.com/rest/api/1.0/projects/fake_proj/repos'
+    'http://fake.bitbucket-server.com/rest/api/1.0'
+    '/projects/fake_proj/repos'
 )
-
-test__get_repos_responses = {
-    FAKE_PROJ_REPOS:
-    FakeResponse.from_resource_path(
-        'bitbucket_server/fake_proj_repos.json',
-    ),
-}
 
 
 def test__get_repos(mock_requests_get):
-    mock_requests_get.side_effect = get_side_effect(
-        test__get_repos_responses,
-    )
+    mock_requests_get.side_effect = get_side_effect({
+        (FAKE_PROJ_REPOS,): FakeResponse.from_resource(
+            'bitbucket_server/fake_proj_repos.json',
+        ),
+    })
     bb = Bitbucket(
         host='http://fake.bitbucket-server.com',
         username='',
@@ -31,8 +27,7 @@ def test__get_repos(mock_requests_get):
 
 def test__get_repos_paged(mock_requests_get):
     mock_requests_get.side_effect = get_side_effect({
-        FAKE_PROJ_REPOS:
-        FakeResponse(
+        (FAKE_PROJ_REPOS,): FakeResponse(
             '{'
             '   "size": 2,'
             '   "limit": 2,'
@@ -45,8 +40,7 @@ def test__get_repos_paged(mock_requests_get):
             '   "nextPageStart": 2'
             '}',
         ),
-        f'{FAKE_PROJ_REPOS}?start=2':
-        FakeResponse(
+        (FAKE_PROJ_REPOS, ('start', 2)): FakeResponse(
             '{'
             '   "size": 2,'
             '   "limit": 2,'
@@ -59,8 +53,7 @@ def test__get_repos_paged(mock_requests_get):
             '   "nextPageStart": 4'
             '}',
         ),
-        f'{FAKE_PROJ_REPOS}?start=4':
-        FakeResponse(
+        (FAKE_PROJ_REPOS, ('start', 4)): FakeResponse(
             '{'
             '   "size": 1,'
             '   "limit": 2,'
