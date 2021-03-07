@@ -1,4 +1,5 @@
 # BB-CLI
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/martinbaklid/bb-cli/main.svg?badge_token=kdBJoLnlSuOz-j78Wndqdg)](https://results.pre-commit.ci/badge/github/martinbaklid/bb-cli/main.svg?badge_token=kdBJoLnlSuOz-j78Wndqdg)
 
 ## Pull requests
 
