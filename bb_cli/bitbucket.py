@@ -24,7 +24,7 @@ class Bitbucket:
         repo: str,
     ) -> List[Dict[str, Any]]:
         endpoint = f'/projects/{project}/repos/{repo}/pull-requests'
-        return self._call(endpoint)
+        return self._call_paged(endpoint)
 
     def _call_paged(
         self,

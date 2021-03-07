@@ -1,5 +1,12 @@
 # BB-CLI
 
+## Pull requests
+
+```shell
+$ bb-cli pr list # reads the current directorys git folder and lists all pr for repo
+```
+
+
 ## Configuration
 
 ```yml
