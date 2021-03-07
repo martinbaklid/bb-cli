@@ -14,6 +14,7 @@ def pull_request() -> None:
 
 @pull_request.command(name='list')
 def list_all() -> None:
+    click.echo('FOOO')
     try:
         remote_url = git.remote_get_url('origin')
     except git.NoRepoException:
