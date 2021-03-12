@@ -25,7 +25,7 @@ def remote_get_url(remote: str) -> str:
     check_is_git_repo()
     res = subprocess.run(
         ('git', 'remote', 'get-url', remote),
-        capture_output=True,
+        stdout=subprocess.PIPE,
     )
     # https://git-scm.com/docs/git-remote#_exit_status
     if res.returncode == NO_SUCH_REMOTE_RETURN_CODE:
