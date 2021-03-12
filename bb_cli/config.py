@@ -1,13 +1,13 @@
 import os
-from typing import List
+import sys
 
 import click
 import yaml
 
 
-try:
+if sys.version_info >= (3, 8):  # pragma: no cover (<PY38)
     from typing import TypedDict
-except ImportError:
+else:  # pragma: no cover (PY38+)
     from mypy_extensions import TypedDict
 
 
@@ -15,18 +15,11 @@ APP_NAME = 'bb-cli'
 ENV_PREFIX = 'BB_CLI_'
 
 
-class ProjectConfig(TypedDict):
-    slug: str
-
-
 class Config(TypedDict):
     version: int
     host: str
     username: str
     token: str
-    include_personal_repos: bool
-    projects_folder: str
-    projects: List[ProjectConfig]
 
 
 def app_environ(key: str, default: str) -> str:
@@ -62,7 +55,7 @@ def config() -> None:
 @config.command()
 def edit() -> None:
     """ opens config file in editor """
-    if not os.path.exists(path()):
+    if not exists():
         raise click.ClickException(
             f"Can't find config file in {path()}",
         )

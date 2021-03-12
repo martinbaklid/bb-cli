@@ -19,16 +19,11 @@ class FakeResponse:
     for real implementation
     """
 
-    def __init__(self, body: str = '', status_code: int = 200):
+    def __init__(self, body: str = ''):
         self._body = body
-        self.status_code = status_code
 
     def json(self) -> Dict[str, Any]:
         return json.loads(self._body)
-
-    @property
-    def ok(self) -> bool:
-        return self.status_code < 400
 
     @staticmethod
     def from_resource(resource_path):

@@ -1,6 +1,8 @@
+from pathlib import Path
+
 from click.testing import CliRunner
 
-from bb_cli.init import init
+from bb_cli.main import main
 
 
 def test__init():
@@ -9,9 +11,6 @@ def test__init():
         'http://fake.bitbucket-server.com/rest/api/1.0/projects/fake_proj/repos',  # noqa: E501
         'olanormann',
         'a_long_token',
-        'no',
-        '/project_path',
-        'web samp',
     )
     expected = (
         'Welcome to Bitbucket CLI',
@@ -28,17 +27,24 @@ def test__init():
         '    4. Click create and copy the token',
         'Paste your token here:',
         'a_long_token',
-        'Do you want your personal repos managed (yes/no) [yes]:',
-        'no',
-        'Where do you want the Bitbucket projects cloned [~/projects]:',
-        '/project_path',
-        'List the slugs of projects you want manage',
-        '(eg. "PROJ_SLUG1 PROJ_SLUG2"):',
-        'web samp',
         'Config initialized in ./config.yaml:',
         'To change configuration use "bb-cli config edit"',
         '',
     )
     with runner.isolated_filesystem():
-        result = runner.invoke(init, input='\n'.join(inputs))
+        result = runner.invoke(main, ['init'], input='\n'.join(inputs))
         assert result.stdout == '\n'.join(expected)
+
+
+def test__init_when_config_exits():
+    runner = CliRunner(env={'BB_CLI_APP_DIR': '.'})
+    with runner.isolated_filesystem():
+        Path('config.yaml').touch()
+
+        result = runner.invoke(main, ['init'])
+
+        assert result.stdout == (
+            'Error: Config allready exsists in ./config.yaml. '
+            'To change the configuration use '
+            'bb-cli conifg edit\n'
+        )

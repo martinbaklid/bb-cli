@@ -1,6 +1,6 @@
 from click.testing import CliRunner
 
-from bb_cli.pull_request import list_all
+from bb_cli.main import main
 from testing import git
 from testing.mock_requests import FakeResponse
 from testing.mock_requests import get_side_effect
@@ -76,7 +76,7 @@ def test__list_all(mock_requests_get, mock_load_config):
         git.init()
         git.remote_add('origin', REMOTE_URL)
 
-        res = runner.invoke(list_all)
+        res = runner.invoke(main, ['pr', 'list'])
 
     assert res.stdout == (
         'Pull requests for fake-repo:\n'
@@ -88,7 +88,7 @@ def test__list_all(mock_requests_get, mock_load_config):
 def test__list_all_no_git_repo():
     runner = CliRunner(mix_stderr=False)
     with runner.isolated_filesystem():
-        res = runner.invoke(list_all)
+        res = runner.invoke(main, ['pr', 'list'])
 
     assert res.exit_code != 0
     assert len(res.stdout) == 0
@@ -102,9 +102,7 @@ def test__list_all_no_origin():
     with runner.isolated_filesystem():
         git.init()
 
-        res = runner.invoke(list_all)
-        print(res.stdout)
-        print(res.stderr)
+        res = runner.invoke(main, ['pr', 'list'])
 
     assert res.exit_code != 0
     assert len(res.stdout) == 0
