@@ -1,5 +1,6 @@
 # BB-CLI
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/martinbaklid/bb-cli/main.svg?badge_token=kdBJoLnlSuOz-j78Wndqdg)](https://results.pre-commit.ci/badge/github/martinbaklid/bb-cli/main.svg?badge_token=kdBJoLnlSuOz-j78Wndqdg)
+[![codecov](https://codecov.io/gh/martinbaklid/bb-cli/branch/main/graph/badge.svg?token=IZYKY0RNSR)](https://codecov.io/gh/martinbaklid/bb-cli)
 
 Bitbucket Server CLI to manage repossitories from the comfort of your command line.
 

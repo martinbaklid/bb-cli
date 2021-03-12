@@ -68,43 +68,14 @@ def init() -> None:
         style('Paste your token here', bold=True),
         prompt_suffix=':\n',
     )
-
-    include_personal_repos = click.prompt(
-        style(
-            'Do you want your personal repos managed (yes/no)', bold=True,
+    bb_cli.config.dump(
+        Config(
+            version=1,
+            host=host,
+            username=username,
+            token=token.strip(),
         ),
-        type=click.BOOL,
-        default='yes',
-        prompt_suffix=':\n',
     )
-
-    projects_folder = click.prompt(
-        style(
-            'Where do you want the Bitbucket projects cloned', bold=True,
-        ),
-        type=click.Path(),
-        default='~/projects',
-        show_default=True,
-        prompt_suffix=':\n',
-    )
-
-    project_slugs = click.prompt(
-        f'{style("List the slugs of projects you want manage",  bold=True)}\n'
-        '(eg. "PROJ_SLUG1 PROJ_SLUG2")',
-        type=custom_types.SPACE_SEP_LIST,
-        prompt_suffix=':\n',
-    )
-
-    initial_config: Config = dict(
-        version=1,
-        host=host,
-        username=username,
-        token=token.strip(),
-        include_personal_repos=include_personal_repos,
-        projects_folder=projects_folder,
-        projects=[dict(slug=slug) for slug in project_slugs],
-    )
-    bb_cli.config.dump(initial_config)
     click.secho(
         f'Config initialized in {bb_cli.config.path()}:',
         fg='green',
