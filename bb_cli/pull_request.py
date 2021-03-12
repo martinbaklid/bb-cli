@@ -2,9 +2,9 @@ import urllib.parse
 
 import click
 
+import bb_cli.config
 from bb_cli import git
 from bb_cli.bitbucket import Bitbucket
-from bb_cli.config import load_config
 
 
 @click.group(name='pr')
@@ -14,7 +14,6 @@ def pull_request() -> None:
 
 @pull_request.command(name='list')
 def list_all() -> None:
-    click.echo('FOOO')
     try:
         remote_url = git.remote_get_url('origin')
     except git.NoRepoException:
@@ -24,7 +23,7 @@ def list_all() -> None:
 
     url_comps = urllib.parse.urlsplit(remote_url)
     project, repo = url_comps.path[1:-4].split('/')
-    config = load_config()
+    config = bb_cli.config.load()
     bitbucket = Bitbucket(
         host=config['host'],
         username=config['username'],

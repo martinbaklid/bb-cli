@@ -4,19 +4,17 @@ import click
 from click import ClickException
 from click import style
 
+import bb_cli.config
 from bb_cli import custom_types
 from bb_cli.config import Config
-from bb_cli.config import config_exists
-from bb_cli.config import config_path
-from bb_cli.config import dump_config
 
 
 @click.command()
 def init() -> None:
     """ Interactive initialization Bitbucket CLI """
-    if config_exists():
+    if bb_cli.config.exists():
         raise ClickException(
-            f'Config allready exsists in {config_path()}. '
+            f'Config allready exsists in {bb_cli.config.path()}. '
             'To change the configuration use '
             f'{style("bb-cli conifg edit", bold=True)}',
         )
@@ -106,9 +104,9 @@ def init() -> None:
         projects_folder=projects_folder,
         projects=[dict(slug=slug) for slug in project_slugs],
     )
-    dump_config(initial_config)
+    bb_cli.config.dump(initial_config)
     click.secho(
-        f'Config initialized in {config_path()}:',
+        f'Config initialized in {bb_cli.config.path()}:',
         fg='green',
         bold=True,
     )

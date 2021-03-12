@@ -6,12 +6,21 @@ from testing.mock_requests import FakeResponse
 from testing.mock_requests import get_side_effect
 
 
-def test__list_all(mock_requests_get):
+def test__list_all(mock_requests_get, mock_load_config):
     PR_URL = (
-        'http://localhost:7990/rest/api/1.0'
+        'http://company.bitbucket.com/rest/api/1.0'
         '/projects/fake_proj/repos/fake-repo/pull-requests'
     )
     REMOTE_URL = 'ssh://git@company.bitbucket.com/fake_proj/fake-repo.git'
+
+    def load_config():
+        return {
+            'host': 'http://company.bitbucket.com',
+            'username': 'user',
+            'token': 'token',
+        }
+    mock_load_config.side_effect = load_config
+
     mock_requests_get.side_effect = get_side_effect({
         (PR_URL,): FakeResponse(
             '{'

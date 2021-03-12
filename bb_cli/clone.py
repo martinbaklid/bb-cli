@@ -4,8 +4,8 @@ from typing import Optional
 
 import click
 
+import bb_cli.config
 from bb_cli.bitbucket import Bitbucket
-from bb_cli.config import load_config
 
 
 def _git(*cmd: str, wdir: Optional[str] = None) -> bool:
@@ -16,7 +16,7 @@ def _git(*cmd: str, wdir: Optional[str] = None) -> bool:
 
 @click.command()
 def clone() -> None:
-    config = load_config()
+    config = bb_cli.config.load()
     bitbucket = Bitbucket(
         host=config['host'],
         username=config['username'],
