@@ -1,6 +1,10 @@
 # BB-CLI
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/martinbaklid/bb-cli/main.svg?badge_token=kdBJoLnlSuOz-j78Wndqdg)](https://results.pre-commit.ci/badge/github/martinbaklid/bb-cli/main.svg?badge_token=kdBJoLnlSuOz-j78Wndqdg)
 
-## Pull requests
+Bitbucket Server CLI to manage repossitories from the comfort of your command line.
+
+## Supported features
+### Pull requests
 
 ```shell
 $ bb-cli pr list # reads the current directorys git folder and lists all pr for repo
