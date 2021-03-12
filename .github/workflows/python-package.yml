@@ -33,15 +33,13 @@ jobs:
     - name: Run tox
       run: |
         tox -e ${{ matrix.python.tox-env }}
-    - name: "Combine coverage"
-      run: |
-        set -xe
-        python -m pip install coverage
-        coverage combine
-        coverage xml
-      if: "contains(env.USING_COVERAGE, matrix.python-version)"
-    - name: "Upload coverage to Codecov"
-      if: "contains(env.USING_COVERAGE, matrix.python-version)"
-      uses: "codecov/codecov-action@v1"
+    - name: Upload coverage.xml
+      if: ${{ matrix.platform == 'ubuntu-latest' && matrix.python.version == '3.9' }}
+      uses: actions/upload-artifact@v2
       with:
-        fail_ci_if_error: true
+        name: tox-bb-cli-coverage
+        path: coverage.xml
+        if-no-files-found: error
+    - name: Upload coverage.xml to codecov
+      if: ${{ matrix.platform == 'ubuntu-latest' && matrix.python.version == '3.9' }}
+      uses: codecov/codecov-action@v1
