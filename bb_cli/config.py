@@ -30,27 +30,27 @@ class Config(TypedDict):
 
 
 def app_environ(key: str, default: str) -> str:
-    return os.environ.get(ENV_PREFIX + key, default)
+    return os.environ.get(f'{ENV_PREFIX}{key}', default)
 
 
-def config_exists() -> bool:
-    return os.path.exists(config_path())
+def exists() -> bool:
+    return os.path.exists(path())
 
 
-def config_path() -> str:
+def path() -> str:
     click_default = click.get_app_dir(APP_NAME, force_posix=True)
     app_dir = app_environ('APP_DIR', default=click_default)
     os.makedirs(app_dir, exist_ok=True)
     return os.path.join(app_dir, 'config.yaml')
 
 
-def dump_config(config: Config) -> None:
-    with open(config_path(), mode='w') as config_file:
+def dump(config: Config) -> None:
+    with open(path(), mode='w') as config_file:
         yaml.safe_dump(config, config_file, sort_keys=False)
 
 
-def load_config() -> Config:
-    with open(config_path()) as config_file:
+def load() -> Config:
+    with open(path()) as config_file:
         return yaml.safe_load(config_file)
 
 
@@ -62,8 +62,8 @@ def config() -> None:
 @config.command()
 def edit() -> None:
     """ opens config file in editor """
-    if not os.path.exists(config_path()):
+    if not os.path.exists(path()):
         raise click.ClickException(
-            f"Can't find config file in {config_path()}",
+            f"Can't find config file in {path()}",
         )
-    click.edit(filename=config_path())
+    click.edit(filename=path())
