@@ -35,7 +35,7 @@ jobs:
       run: |
         tox -e ${{ matrix.python.tox-env }}
     - name: Upload coverage.xml
-      if: ${{ matrix.python.version == '3.9' u&& matrix.platform == 'ubuntu-latest' }}
+      if: ${{ matrix.python.version == '3.9' && matrix.platform == 'ubuntu-latest' }}
       uses: actions/upload-artifact@v2
       with:
         name: tox-bb-cli-coverage
