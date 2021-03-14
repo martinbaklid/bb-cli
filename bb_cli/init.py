@@ -1,7 +1,6 @@
 import urllib.parse
 
 import click
-from click import ClickException
 from click import style
 
 import bb_cli.config
@@ -13,14 +12,14 @@ from bb_cli.config import Config
 def init() -> None:
     """ Interactive initialization Bitbucket CLI """
     if bb_cli.config.exists():
-        raise ClickException(
-            f'Config allready exsists in {bb_cli.config.path()}. '
-            'To change the configuration use '
-            f'{style("bb-cli conifg edit", bold=True)}',
+        print(
+            f'Error: Config allready exsists in {bb_cli.config.path()}. '
+            'To change the configuration use bb-cli conifg edit',
         )
+        exit(1)
 
-    click.secho('Welcome to Bitbucket CLI', fg='blue', bold=True)
-    click.secho('Starting first time configuration', fg='blue', bold=True)
+    print('Welcome to Bitbucket CLI')
+    print('Starting first time configuration')
     host = click.prompt(
         style(
             'Provide the url to your bitbucket server\n'
@@ -40,30 +39,12 @@ def init() -> None:
     token_gen_url = urllib.parse.urljoin(
         host, 'plugins/servlet/access-tokens/manage',
     )
-    click.secho(
-        'BitBucket CLI needs a personal api token with read premisions.',
-        fg='blue',
-        bold=True,
-    )
-    click.secho(
-        f'    1. Go to {token_gen_url}',
-        fg='blue',
-        bold=True,
-    )
-    click.secho(
-        '    2. Click "Create a token"',
-        fg='blue',
-        bold=True,
-    )
-    click.secho(
-        '    3. Set "Token name" and select "Read Premisions"',
-        fg='blue',
-        bold=True,
-    )
-    click.secho(
-        '    4. Click create and copy the token',
-        fg='blue', bold=True,
-    )
+    print('BitBucket CLI needs a personal api token with read premisions.')
+    print(f'    1. Go to {token_gen_url}')
+    print('    2. Click "Create a token"')
+    print('    3. Set "Token name" and select "Read Premisions"')
+    print('    4. Click create and copy the token')
+
     token = click.prompt(
         style('Paste your token here', bold=True),
         prompt_suffix=':\n',
@@ -76,13 +57,5 @@ def init() -> None:
             token=token.strip(),
         ),
     )
-    click.secho(
-        f'Config initialized in {bb_cli.config.path()}:',
-        fg='green',
-        bold=True,
-    )
-    click.secho(
-        'To change configuration use "bb-cli config edit"',
-        fg='blue',
-        bold=True,
-    )
+    print(f'Config initialized in {bb_cli.config.path()}:')
+    print('To change configuration use "bb-cli config edit"')
