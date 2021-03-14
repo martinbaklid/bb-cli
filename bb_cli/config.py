@@ -45,18 +45,3 @@ def dump(config: Config) -> None:
 def load() -> Config:
     with open(path()) as config_file:
         return yaml.safe_load(config_file)
-
-
-@click.group()
-def config() -> None:
-    pass
-
-
-@config.command()
-def edit() -> None:
-    """ opens config file in editor """
-    if not exists():
-        raise click.ClickException(
-            f"Can't find config file in {path()}",
-        )
-    click.edit(filename=path())

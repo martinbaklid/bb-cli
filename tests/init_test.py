@@ -34,8 +34,7 @@ def test__init(tmp_path, capsys, mock_input):
         '    3. Set "Token name" and select "Read Premisions"\n'
         '    4. Click create and copy the token\n'
         'Paste your token here:\n'
-        'Config initialized in ./config.yaml:\n'
-        'To change configuration use "bb-cli config edit"\n'
+        'Config initialized in ./config.yaml\n'
     )
     assert config['host'] == 'http://fake.bitbucket-server.com'
     assert config['username'] == 'olanormann'
@@ -51,8 +50,4 @@ def test__init_when_config_exits(tmp_path, capsys):
             _init()
 
     _, err = capsys.readouterr()
-    assert err == (
-        'Error: Config allready exsists in ./config.yaml. '
-        'To change the configuration use '
-        'bb-cli conifg edit\n'
-    )
+    assert err == 'Error: Config allready exsists in ./config.yaml.\n'

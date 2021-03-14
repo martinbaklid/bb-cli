@@ -12,8 +12,7 @@ def _init() -> None:
     """ Interactive initialization Bitbucket CLI """
     if bb_cli.config.exists():
         print(
-            f'Error: Config allready exsists in {bb_cli.config.path()}. '
-            'To change the configuration use bb-cli conifg edit',
+            f'Error: Config allready exsists in {bb_cli.config.path()}.',
             file=sys.stderr,
         )
         exit(1)
@@ -48,8 +47,7 @@ def _init() -> None:
             token=token.strip(),
         ),
     )
-    print(f'Config initialized in {bb_cli.config.path()}:')
-    print('To change configuration use "bb-cli config edit"')
+    print(f'Config initialized in {bb_cli.config.path()}')
 
 
 @click.command(name='click')
