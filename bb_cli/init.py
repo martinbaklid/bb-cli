@@ -1,10 +1,9 @@
 import urllib.parse
 
 import click
-from click import style
 
 import bb_cli.config
-from bb_cli import custom_types
+from bb_cli import cli
 from bb_cli.config import Config
 
 
@@ -20,35 +19,26 @@ def init() -> None:
 
     print('Welcome to Bitbucket CLI')
     print('Starting first time configuration')
-    host = click.prompt(
-        style(
-            'Provide the url to your bitbucket server\n'
-            '(eg. https://company.bitbucket-server.com)',
-            bold=True,
-        ),
-        type=custom_types.HOST,
-        prompt_suffix=':\n',
+    host = cli.prompt(
+        'Provide the url to your bitbucket server\n'
+        '(eg. https://company.bitbucket-server.com):\n',
     )
     host = urllib.parse.urljoin('https://', host)
 
-    username = click.prompt(
-        style('Provide your username', bold=True),
-        prompt_suffix=':\n',
-    )
+    username = cli.prompt('Provide your username:\n')
 
     token_gen_url = urllib.parse.urljoin(
         host, 'plugins/servlet/access-tokens/manage',
     )
-    print('BitBucket CLI needs a personal api token with read premisions.')
-    print(f'    1. Go to {token_gen_url}')
-    print('    2. Click "Create a token"')
-    print('    3. Set "Token name" and select "Read Premisions"')
-    print('    4. Click create and copy the token')
-
-    token = click.prompt(
-        style('Paste your token here', bold=True),
-        prompt_suffix=':\n',
+    token = cli.prompt(
+        'BitBucket CLI needs a personal api token with read premisions.\n'
+        f'    1. Go to {token_gen_url}\n'
+        '    2. Click "Create a token"\n'
+        '    3. Set "Token name" and select "Read Premisions"\n'
+        '    4. Click create and copy the token\n'
+        'Paste your token here:\n',
     )
+
     bb_cli.config.dump(
         Config(
             version=1,
