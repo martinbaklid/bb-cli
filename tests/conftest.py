@@ -1,3 +1,4 @@
+import builtins
 from unittest import mock
 
 import click
@@ -21,3 +22,16 @@ def mock_load_config():
 def mock_click_edit():
     with mock.patch.object(click, 'edit') as mck:
         yield mck
+
+
+@pytest.fixture
+def mock_input():
+    with mock.patch.object(builtins, 'input') as mck:
+        def setup_inputs(*inputs):
+            it = iter(inputs)
+
+            def side_effect(s):
+                print(s, end='')
+                return next(it)
+            mck.side_effect = side_effect
+        yield setup_inputs
