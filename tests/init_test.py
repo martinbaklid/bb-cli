@@ -1,10 +1,8 @@
 import os
 from pathlib import Path
 
-import pytest
-
 import bb_cli.config
-from bb_cli.init import _init
+from bb_cli.init import init
 from testing import os_utils
 
 
@@ -17,10 +15,11 @@ def test__init(tmp_path, capsys, mock_input):
             'a_long_token',
         )
 
-        _init()
+        return_code = init()
 
         config = bb_cli.config.load()
     out, _ = capsys.readouterr()
+    assert return_code == 0
     assert out == (
         'Welcome to Bitbucket CLI\n'
         'Starting first time configuration\n'
@@ -46,8 +45,8 @@ def test__init_when_config_exits(tmp_path, capsys):
         os.environ['BB_CLI_APP_DIR'] = '.'
         Path('config.yaml').touch()
 
-        with pytest.raises(SystemExit):
-            _init()
+        return_code = init()
 
     _, err = capsys.readouterr()
-    assert err == 'Error: Config allready exsists in ./config.yaml.\n'
+    assert return_code == 1
+    assert err == 'Error: Config already exists in ./config.yaml.\n'

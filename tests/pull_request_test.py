@@ -1,6 +1,4 @@
-import pytest
-
-from bb_cli.pull_request import _list_all
+from bb_cli.pull_request import list_all
 from testing import git
 from testing import os_utils
 from testing.mock_requests import FakeResponse
@@ -76,7 +74,7 @@ def test__list_all(mock_requests_get, mock_load_config, tmp_path, capsys):
         git.init()
         git.remote_add('origin', REMOTE_URL)
 
-        _list_all()
+        list_all()
 
     out, _ = capsys.readouterr()
     assert out == (
@@ -88,10 +86,10 @@ def test__list_all(mock_requests_get, mock_load_config, tmp_path, capsys):
 
 def test__list_all_no_git_repo(tmp_path, capsys):
     with os_utils.cwd(tmp_path):
-        with pytest.raises(SystemExit):
-            _list_all()
+        return_code = list_all()
 
     _, err = capsys.readouterr()
+    assert return_code == 1
     assert err == (
         'Error: not a git repository\n'
     )
@@ -101,10 +99,10 @@ def test__list_all_no_origin(tmp_path, capsys):
     with os_utils.cwd(tmp_path):
         git.init()
 
-        with pytest.raises(SystemExit):
-            _list_all()
+        return_code = list_all()
 
     _, err = capsys.readouterr()
+    assert return_code == 1
     assert err == (
         'Error: no git remote named origin found\n'
     )

@@ -1,22 +1,20 @@
 import sys
 import urllib.parse
 
-import click
-
 import bb_cli.config
 from bb_cli import git
 from bb_cli.bitbucket import Bitbucket
 
 
-def _list_all() -> None:
+def list_all() -> int:
     try:
         remote_url = git.remote_get_url('origin')
     except git.NoRepoException:
         print('Error: not a git repository', file=sys.stderr)
-        exit(1)
+        return 1
     except git.NoSuchRemoteException:
         print('Error: no git remote named origin found', file=sys.stderr)
-        exit(1)
+        return 1
 
     url_comps = urllib.parse.urlsplit(remote_url)
     project, repo = url_comps.path[1:-4].split('/')
@@ -34,13 +32,4 @@ def _list_all() -> None:
             f'({pull_request["fromRef"]["displayId"]} ->'
             f' {pull_request["toRef"]["displayId"]})',
         )
-
-
-@click.group(name='pr')
-def pull_request() -> None:
-    pass
-
-
-@pull_request.command(name='list')
-def list_all() -> None:
-    _list_all()
+    return 0

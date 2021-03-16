@@ -1,21 +1,19 @@
 import sys
 import urllib.parse
 
-import click
-
 import bb_cli.config
 from bb_cli import cli
 from bb_cli.config import Config
 
 
-def _init() -> None:
+def init() -> int:
     """ Interactive initialization Bitbucket CLI """
     if bb_cli.config.exists():
         print(
-            f'Error: Config allready exsists in {bb_cli.config.path()}.',
+            f'Error: Config already exists in {bb_cli.config.path()}.',
             file=sys.stderr,
         )
-        exit(1)
+        return 1
 
     print('Welcome to Bitbucket CLI')
     print('Starting first time configuration')
@@ -48,8 +46,4 @@ def _init() -> None:
         ),
     )
     print(f'Config initialized in {bb_cli.config.path()}')
-
-
-@click.command(name='click')
-def init() -> None:
-    _init()
+    return 0
