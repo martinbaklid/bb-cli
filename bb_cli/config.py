@@ -30,7 +30,7 @@ def path() -> str:
         app_dir = os.path.join(os.environ.get('LOCALAPPDATA'), APP_NAME)
     else:
         app_dir = os.path.expanduser(f'~/.{APP_NAME}')
-    app_dir = os.environ.get(f'{APP_ENV_PREFIX}_', default=app_dir)
+    app_dir = os.environ.get(f'{APP_ENV_PREFIX}APP_DIR', default=app_dir)
     os.makedirs(app_dir, exist_ok=True)
     return os.path.join(app_dir, 'config.yaml')
 
