@@ -26,9 +26,9 @@ def exists() -> bool:
 
 
 def path() -> str:
-    if sys.platform.startswith('win'):
+    if sys.platform.startswith('win'):  # pragma: no cover (windows)
         app_dir = os.path.join(os.environ.get('LOCALAPPDATA'), APP_NAME)
-    else:
+    else:  # pragma: no cover (linux)
         app_dir = os.path.expanduser(f'~/.{APP_NAME}')
     app_dir = os.environ.get(f'{APP_ENV_PREFIX}APP_DIR', default=app_dir)
     os.makedirs(app_dir, exist_ok=True)
