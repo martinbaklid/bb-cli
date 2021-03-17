@@ -1,50 +1,52 @@
+import os
 from pathlib import Path
 
-from click.testing import CliRunner
+import bb_cli.config
+from bb_cli.init import init
+from testing import os_utils
 
-from bb_cli.main import main
 
+def test__init(tmp_path, capsys, mock_input):
+    with os_utils.cwd(tmp_path):
+        os.environ['BB_CLI_APP_DIR'] = '.'
+        mock_input(
+            'http://fake.bitbucket-server.com',
+            'olanormann',
+            'a_long_token',
+        )
 
-def test__init():
-    runner = CliRunner(env={'BB_CLI_APP_DIR': '.'})
-    inputs = (
-        'http://fake.bitbucket-server.com/rest/api/1.0/projects/fake_proj/repos',  # noqa: E501
-        'olanormann',
-        'a_long_token',
+        return_code = init()
+
+        config = bb_cli.config.load()
+    out, _ = capsys.readouterr()
+    assert return_code == 0
+    assert out == (
+        'Welcome to Bitbucket CLI\n'
+        'Starting first time configuration\n'
+        'Provide the url to your bitbucket server\n'
+        '(eg. https://company.bitbucket-server.com):\n'
+        'Provide your username:\n'
+        'BitBucket CLI needs a personal api token with read premisions.\n'
+        '    1. Go to '
+        'http://fake.bitbucket-server.com/plugins/servlet/access-tokens/manage\n'  # noqa: E501
+        '    2. Click "Create a token"\n'
+        '    3. Set "Token name" and select "Read Premisions"\n'
+        '    4. Click create and copy the token\n'
+        'Paste your token here:\n'
+        'Config initialized in ./config.yaml\n'
     )
-    expected = (
-        'Welcome to Bitbucket CLI',
-        'Starting first time configuration',
-        'Provide the url to your bitbucket server',
-        '(eg. https://company.bitbucket-server.com):',
-        'http://fake.bitbucket-server.com/rest/api/1.0/projects/fake_proj/repos',  # noqa: E501
-        'Provide your username:',
-        'olanormann',
-        'BitBucket CLI needs a personal api token with read premisions.',
-        '    1. Go to http://fake.bitbucket-server.com/rest/api/1.0/projects/fake_proj/plugins/servlet/access-tokens/manage',  # noqa: E501
-        '    2. Click "Create a token"',
-        '    3. Set "Token name" and select "Read Premisions"',
-        '    4. Click create and copy the token',
-        'Paste your token here:',
-        'a_long_token',
-        'Config initialized in ./config.yaml:',
-        'To change configuration use "bb-cli config edit"',
-        '',
-    )
-    with runner.isolated_filesystem():
-        result = runner.invoke(main, ['init'], input='\n'.join(inputs))
-        assert result.stdout == '\n'.join(expected)
+    assert config['host'] == 'http://fake.bitbucket-server.com'
+    assert config['username'] == 'olanormann'
+    assert config['token'] == 'a_long_token'
 
 
-def test__init_when_config_exits():
-    runner = CliRunner(env={'BB_CLI_APP_DIR': '.'})
-    with runner.isolated_filesystem():
+def test__init_when_config_exits(tmp_path, capsys):
+    with os_utils.cwd(tmp_path):
+        os.environ['BB_CLI_APP_DIR'] = '.'
         Path('config.yaml').touch()
 
-        result = runner.invoke(main, ['init'])
+        return_code = init()
 
-        assert result.stdout == (
-            'Error: Config allready exsists in ./config.yaml. '
-            'To change the configuration use '
-            'bb-cli conifg edit\n'
-        )
+    _, err = capsys.readouterr()
+    assert return_code == 1
+    assert err == 'Error: Config already exists in ./config.yaml.\n'

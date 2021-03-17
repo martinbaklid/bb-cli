@@ -1,7 +1,6 @@
 import os
 import sys
 
-import click
 import yaml
 
 
@@ -12,7 +11,7 @@ else:  # pragma: no cover (PY38+)
 
 
 APP_NAME = 'bb-cli'
-ENV_PREFIX = 'BB_CLI_'
+APP_ENV_PREFIX = 'BB_CLI_'
 
 
 class Config(TypedDict):
@@ -22,17 +21,16 @@ class Config(TypedDict):
     token: str
 
 
-def app_environ(key: str, default: str) -> str:
-    return os.environ.get(f'{ENV_PREFIX}{key}', default)
-
-
 def exists() -> bool:
     return os.path.exists(path())
 
 
 def path() -> str:
-    click_default = click.get_app_dir(APP_NAME, force_posix=True)
-    app_dir = app_environ('APP_DIR', default=click_default)
+    if sys.platform.startswith('win'):  # pragma: no cover (windows)
+        app_dir = os.path.join(os.environ.get('LOCALAPPDATA'), APP_NAME)
+    else:  # pragma: no cover (linux)
+        app_dir = os.path.expanduser(f'~/.{APP_NAME}')
+    app_dir = os.environ.get(f'{APP_ENV_PREFIX}APP_DIR', default=app_dir)
     os.makedirs(app_dir, exist_ok=True)
     return os.path.join(app_dir, 'config.yaml')
 
@@ -45,18 +43,3 @@ def dump(config: Config) -> None:
 def load() -> Config:
     with open(path()) as config_file:
         return yaml.safe_load(config_file)
-
-
-@click.group()
-def config() -> None:
-    pass
-
-
-@config.command()
-def edit() -> None:
-    """ opens config file in editor """
-    if not exists():
-        raise click.ClickException(
-            f"Can't find config file in {path()}",
-        )
-    click.edit(filename=path())

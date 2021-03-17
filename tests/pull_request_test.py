@@ -1,12 +1,11 @@
-from click.testing import CliRunner
-
-from bb_cli.main import main
+from bb_cli.pull_request import list_all
 from testing import git
+from testing import os_utils
 from testing.mock_requests import FakeResponse
 from testing.mock_requests import get_side_effect
 
 
-def test__list_all(mock_requests_get, mock_load_config):
+def test__list_all(mock_requests_get, mock_load_config, tmp_path, capsys):
     PR_URL = (
         'http://company.bitbucket.com/rest/api/1.0'
         '/projects/fake_proj/repos/fake-repo/pull-requests'
@@ -71,41 +70,39 @@ def test__list_all(mock_requests_get, mock_load_config):
         ),
     })
 
-    runner = CliRunner()
-    with runner.isolated_filesystem():
+    with os_utils.cwd(tmp_path):
         git.init()
         git.remote_add('origin', REMOTE_URL)
 
-        res = runner.invoke(main, ['pr', 'list'])
+        list_all()
 
-    assert res.stdout == (
+    out, _ = capsys.readouterr()
+    assert out == (
         'Pull requests for fake-repo:\n'
         '#3: feat: add readme (feature/readme -> master)\n'
         '#5: fix: fix typo in readme (bugfix/typo -> master)\n'
     )
 
 
-def test__list_all_no_git_repo():
-    runner = CliRunner(mix_stderr=False)
-    with runner.isolated_filesystem():
-        res = runner.invoke(main, ['pr', 'list'])
+def test__list_all_no_git_repo(tmp_path, capsys):
+    with os_utils.cwd(tmp_path):
+        return_code = list_all()
 
-    assert res.exit_code != 0
-    assert len(res.stdout) == 0
-    assert res.stderr == (
+    _, err = capsys.readouterr()
+    assert return_code == 1
+    assert err == (
         'Error: not a git repository\n'
     )
 
 
-def test__list_all_no_origin():
-    runner = CliRunner(mix_stderr=False)
-    with runner.isolated_filesystem():
+def test__list_all_no_origin(tmp_path, capsys):
+    with os_utils.cwd(tmp_path):
         git.init()
 
-        res = runner.invoke(main, ['pr', 'list'])
+        return_code = list_all()
 
-    assert res.exit_code != 0
-    assert len(res.stdout) == 0
-    assert res.stderr == (
+    _, err = capsys.readouterr()
+    assert return_code == 1
+    assert err == (
         'Error: no git remote named origin found\n'
     )
