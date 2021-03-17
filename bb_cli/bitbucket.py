@@ -51,7 +51,9 @@ class Bitbucket:
 
     @property
     def _api_url(self) -> str:
-        host = urllib.parse.urljoin('https://', self._host)
+        host = self._host
+        if not host.startswith('http'):
+            host = urllib.parse.urljoin('https://', f'//{self._host}')
         return urllib.parse.urljoin(host, self._API_PATH)
 
     @property

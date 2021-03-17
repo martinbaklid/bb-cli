@@ -25,6 +25,26 @@ def test__get_repos(mock_requests_get):
     assert repos[0]['slug'] == 'fake-repo'
 
 
+def test__get_repos_host_without_schema(mock_requests_get):
+    mock_requests_get.side_effect = get_side_effect({
+        (
+            'https://fake.bitbucket-server.com/rest/api/1.0'
+            '/projects/fake_proj/repos',
+        ): FakeResponse.from_resource(
+            'bitbucket_server/fake_proj_repos.json',
+        ),
+    })
+    bb = Bitbucket(
+        host='fake.bitbucket-server.com',
+        username='',
+        token='',
+    )
+
+    repos = bb.get_repos('fake_proj')
+
+    assert repos[0]['slug'] == 'fake-repo'
+
+
 def test__get_repos_paged(mock_requests_get):
     mock_requests_get.side_effect = get_side_effect({
         (FAKE_PROJ_REPOS,): FakeResponse(
