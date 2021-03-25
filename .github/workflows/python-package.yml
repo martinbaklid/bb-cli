@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        platform: [ubuntu-latest, macos-latest]
         python:
           - version: 3.6
             tox-env: py36
@@ -20,7 +20,7 @@ jobs:
             tox-env: py38
           - version: 3.9
             tox-env: py39
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python.version }}

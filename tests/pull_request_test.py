@@ -8,9 +8,9 @@ from testing.mock_requests import get_side_effect
 def test__list_all(mock_requests_get, mock_load_config, tmp_path, capsys):
     PR_URL = (
         'http://company.bitbucket.com/rest/api/1.0'
-        '/projects/fake_proj/repos/fake-repo/pull-requests'
+        '/projects/fake-proj/repos/fake-repo/pull-requests'
     )
-    REMOTE_URL = 'ssh://git@company.bitbucket.com/fake_proj/fake-repo.git'
+    REMOTE_URL = 'ssh://git@company.bitbucket.com/fake-proj/fake-repo.git'
 
     def load_config():
         return {
@@ -105,4 +105,65 @@ def test__list_all_no_origin(tmp_path, capsys):
     assert return_code == 1
     assert err == (
         'Error: no git remote named origin found\n'
+    )
+
+
+def test__list_all_host_missing_in_config(tmp_path, capsys, mock_load_config):
+    REMOTE_URL = 'ssh://git@company.bitbucket.com/fake-proj/fake-repo.git'
+
+    def load_config():
+        return {
+            'host': 'http://not-same-company.bitbucket.com',
+            'username': 'user',
+            'token': 'token',
+        }
+    mock_load_config.side_effect = load_config
+
+    with os_utils.cwd(tmp_path):
+        git.init()
+        git.remote_add('origin', REMOTE_URL)
+
+        return_code = list_all()
+
+    _, err = capsys.readouterr()
+    assert return_code == 1
+    assert err == (
+        'Error: No host named company.bitbucket.com in the config\n'
+    )
+
+
+def test__list_all_repo_does_not_exist(
+    tmp_path,
+    capsys,
+    mock_load_config,
+    mock_requests_get,
+):
+    PR_URL = (
+        'http://company.bitbucket.com/rest/api/1.0'
+        '/projects/fake-proj/repos/fake-repo/pull-requests'
+    )
+    REMOTE_URL = 'ssh://git@company.bitbucket.com/fake-proj/fake-repo.git'
+
+    def load_config():
+        return {
+            'host': 'http://company.bitbucket.com',
+            'username': 'user',
+            'token': 'token',
+        }
+    mock_load_config.side_effect = load_config
+
+    mock_requests_get.side_effect = get_side_effect({
+        (PR_URL,): FakeResponse('', status_code=404),
+    })
+
+    with os_utils.cwd(tmp_path):
+        git.init()
+        git.remote_add('origin', REMOTE_URL)
+
+        return_code = list_all()
+
+    _, err = capsys.readouterr()
+    assert return_code == 1
+    assert err == (
+        'Error: Did not find the repossitory fake-repo for project fake-proj\n'
     )
