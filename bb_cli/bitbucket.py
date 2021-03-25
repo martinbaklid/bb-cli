@@ -7,6 +7,18 @@ from typing import Tuple
 import requests
 
 
+class BitbucetException(Exception):
+    pass
+
+
+class NoSuchProjectException(BitbucetException):
+    pass
+
+
+class NoSuchRepoException(BitbucetException):
+    pass
+
+
 class Bitbucket:
     _API_PATH = '/rest/api/1.0/'
 
@@ -16,7 +28,13 @@ class Bitbucket:
         self._token = token
 
     def get_repos(self, project: str) -> List[Dict[str, Any]]:
-        return self._call_paged(f'/projects/{project}/repos')
+        try:
+            return self._call_paged(f'/projects/{project}/repos')
+        except requests.HTTPError as e:
+            if e.response.status_code == requests.codes.not_found:
+                raise NoSuchProjectException
+            else:
+                raise BitbucetException
 
     def get_pull_requests(
         self,
@@ -24,7 +42,13 @@ class Bitbucket:
         repo: str,
     ) -> List[Dict[str, Any]]:
         endpoint = f'/projects/{project}/repos/{repo}/pull-requests'
-        return self._call_paged(endpoint)
+        try:
+            return self._call_paged(endpoint)
+        except requests.HTTPError as e:
+            if e.response.status_code == requests.codes.not_found:
+                raise NoSuchRepoException
+            else:
+                raise BitbucetException
 
     def _call_paged(
         self,
@@ -43,11 +67,13 @@ class Bitbucket:
     def _call(self, endpoint: str, params: Dict[str, str] = {}) -> Any:
         _norm_endpoint = endpoint.strip('/')
         _full_url = urllib.parse.urljoin(self._api_url, _norm_endpoint)
-        return requests.get(
+        res = requests.get(
             _full_url,
             params=params,
             auth=self._auth,
-        ).json()
+        )
+        res.raise_for_status()
+        return res.json()
 
     @property
     def _api_url(self) -> str:
