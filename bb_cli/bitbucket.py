@@ -33,8 +33,7 @@ class Bitbucket:
         except requests.HTTPError as e:
             if e.response.status_code == requests.codes.not_found:
                 raise NoSuchProjectException
-            else:
-                raise BitbucetException
+            raise BitbucetException
 
     def get_pull_requests(
         self,
@@ -47,8 +46,7 @@ class Bitbucket:
         except requests.HTTPError as e:
             if e.response.status_code == requests.codes.not_found:
                 raise NoSuchRepoException
-            else:
-                raise BitbucetException
+            raise BitbucetException
 
     def _call_paged(
         self,
